@@ -1,13 +1,14 @@
 #include <iostream>
 #include <fstream>
-#include <vector>
+#include <map>
+#include <algorithm>
 using namespace std;
 
 int main(int argv, char **argc) {
-  vector<pair<string, int>> words;
+  map<string, int> words;
   ifstream fin(argc[1]);
   string nextword;
-
+  
   while (fin >> nextword) {
     bool found = false;
     for (auto &[word, occurrence] : words) {
@@ -26,15 +27,15 @@ int main(int argv, char **argc) {
     return 0;
   }
 
-  string word_with_max_occur = words[0].first;
-  int max_occur = words[0].second;
-  for (auto &[word, occur] : words)
-    if (occur > max_occur) {
-      word_with_max_occur = word;
-      max_occur = occur;
+  auto answer = max_element(words.begin(), words.end(),
+    // Define a comparator
+    [](auto &elem1, auto &elem2) {
+      // Compare the occurrence first.
+      return tie(elem1.second, elem1.first) < tie(elem2.second, elem2.first);
     }
+  );
 
-  cout << "Word '" << word_with_max_occur << "' appeared " << max_occur
+  cout << "Word '" << answer->first << "' appeared " << answer->second
        << " times." << endl;
   return 0;
 }
